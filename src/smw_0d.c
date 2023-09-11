@@ -3730,7 +3730,7 @@ void ExtObj80_GhostHouseEntrance(uint8 k) {  // 0deb6a
 }
 
 void ExtObj85_YoshisHouse(uint8 k) {  // 0dec33
-  uint8 v0 = blocks_sub_scr_pos;
+  /*uint8 v0 = blocks_sub_scr_pos;
   for (uint8 i = 0; i != 0xA0; ++i) {
     uint8 r0 = 15;
     do {
@@ -3740,7 +3740,7 @@ void ExtObj85_YoshisHouse(uint8 k) {  // 0dec33
     SetMap16HighByteForCurrentObject_Page00(v0);
     SetMap16LowByte(v0, *((uint8 *)kExtObj85_YoshisHouse_Tiles + i));
     v0 = HandleVerticalSubScreenCrossingForCurrentObject_HorizontalLevel();
-  }
+  }*/
 }
 
 void ExtObj97_SwitchPalaceRightAndBottomEdgeTile(uint8 k) {  // 0dec5c

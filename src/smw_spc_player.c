@@ -712,7 +712,7 @@ static void Sfx1_Process(SmwSpcPlayer *p) {
     }
   } else if (p->new_value_from_snes[1] == 3) {
     // disable yoshi drums
-    p->smw_player_on_yoshi = 0;
+    //p->smw_player_on_yoshi = 0;
   } else if (p->new_value_from_snes[1] == 1 ||
              p->base.port_to_snes[1] != 1 && p->new_value_from_snes[1] == 4) {
     // jump & two note sfx

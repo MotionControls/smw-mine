@@ -10,7 +10,7 @@
 enum RunMode { RM_BOTH, RM_MINE, RM_THEIRS };
 uint8 g_runmode = RM_BOTH;
 
-extern int g_got_mismatch_count;
+//extern int g_got_mismatch_count;
 
 Snes *g_snes;
 Cpu *g_cpu;
@@ -121,7 +121,7 @@ bool HookedFunctionRts(int is_long) {
 }
 
 static void VerifySnapshotsEq(Snapshot *b, Snapshot *a, Snapshot *prev) {
-  if (memcmp(b->ram, a->ram, 0x20000)) {
+  /*if (memcmp(b->ram, a->ram, 0x20000)) {
     fprintf(stderr, "@%d: Memory compare failed (mine != theirs, prev):\n", snes_frame_counter);
     int j = 0;
     for (size_t i = 0; i < 0x20000; i++) {
@@ -199,7 +199,7 @@ static void VerifySnapshotsEq(Snapshot *b, Snapshot *a, Snapshot *prev) {
   }
 
 
-#endif
+#endif*/
 }
 
 static void MakeSnapshot(Snapshot *s) {
@@ -297,12 +297,12 @@ Snes *SnesInit(const uint8 *data, int data_size) {
 }
 
 void SaveBugSnapshot() {
-  if (!g_debug_flag && g_got_mismatch_count == 0) {
+  /*if (!g_debug_flag && g_got_mismatch_count == 0) {
     char buffer[64];
     snprintf(buffer, sizeof(buffer), "saves/%s-bug-%d.sav", g_rtl_game_info->title, (int)time(NULL));
     RtlSaveSnapshot(buffer, true);
   }
-  g_got_mismatch_count = 5 * 60;
+  g_got_mismatch_count = 5 * 60;*/
 }
 
 int g_dbg_ctr_mine, g_dbg_ctr_theirs;
@@ -331,7 +331,7 @@ again_theirs:
 
   // Compare both snapshots
   g_rtl_game_info->fix_snapshot_for_compare(&g_snapshot_mine, &g_snapshot_theirs);
-  VerifySnapshotsEq(&g_snapshot_mine, &g_snapshot_theirs, &g_snapshot_before);
+  //VerifySnapshotsEq(&g_snapshot_mine, &g_snapshot_theirs, &g_snapshot_before);
 
   if (g_fail) {
     g_fail = false;
@@ -355,8 +355,8 @@ getout:
   g_ppu = g_other_image ? g_my_ppu : g_snes->ppu;
   g_snes->runningWhichVersion = 0;
 
-  if (g_got_mismatch_count)
-    g_got_mismatch_count--;
+  /*if (g_got_mismatch_count)
+    g_got_mismatch_count--;*/
 }
 
 void RtlRunFrameCompare() {

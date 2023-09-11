@@ -841,9 +841,9 @@ uint8 GrabThrowBlockBlock() {  // 02862f
   if ((j & 0x80) != 0)
     return j;
   spr_current_status[j] = 11;
-  SetSprYPos(j, player_ypos);
-  spr_xpos_lo[j] = player_xpos;
-  spr_xpos_hi[j] = *((uint8 *)&player_xpos + j + 1); // wtf?
+  SetSprYPos(j, player_ypos - 32);
+  spr_xpos_lo[j] = player_xpos - 32;
+  spr_xpos_hi[j] = *((uint8 *)&player_xpos - 32 + j + 1); // wtf?
   spr_spriteid[j] = 83;
   InitializeNormalSpriteRAMTables(j);
   spr_decrementing_table1540[j] = -1;
@@ -870,7 +870,7 @@ LABEL_7:
     mextspr_spriteid[j] = 1;
     SetHiLo(&mextspr_xpos_hi[j], &mextspr_xpos_lo[j], blocks_xpos + kSpawnBrickPieces_xlo[v1]);
     SetHiLo(&mextspr_ypos_hi[j], &mextspr_ypos_lo[j], blocks_ypos + kSpawnBrickPieces_ylo[v1]);
-    mextspr_yspeed[j] = kSpawnBrickPieces_InitialYSpeed[v1];
+    mextspr_yspeed[j] = 30; //kSpawnBrickPieces_InitialYSpeed[v1];
     mextspr_xspeed[j] = kSpawnBrickPieces_InitialXSpeed[v1];
     mextspr_timer[j] = r0;
     --v1;
@@ -913,8 +913,8 @@ void SpawnBounceSprite(uint8 r4, uint8 r5, uint8 r6, uint8 r7) {  // 028752
     *(&player_mario_score_lo + v0) = v1 + 5;
     if (v1 >= 0xFB && (*(&player_mario_score_mid + v0))++ == 0xFF)
       ++*(&player_mario_score_hi + v0);
-    player_yspeed = -48;
-    SpawnBrickPieces(0);
+    player_yspeed = 0;//-48;
+    //SpawnBrickPieces(60);
     InitializeBlockPunchAttack();
     blocks_map16_to_generate = 2;
     GenerateTile();
@@ -1127,7 +1127,7 @@ void GameMode14_InLevel_Bank02() {  // 028ab1
 
   if (misc_1up_handler) {
     if (timer_give1up) {
-      --timer_give1up;
+      //--timer_give1up;
     } else {
       if (--misc_1up_handler)
         timer_give1up = 35;
@@ -5210,7 +5210,7 @@ void SprXXX_WallSpringboard(uint8 k) {  // 02cdcb
       --spr_table1534[k];
       if ((io_controller_hold1 & 0x80) != 0) {
         spr_table1534[k] = 0;
-        player_yspeed = kSprXXX_WallSpringboard_HighBouncePlayerYSpeed[spr_table151c[k]];
+        player_yspeed = 0;//kSprXXX_WallSpringboard_HighBouncePlayerYSpeed[spr_table151c[k]];
         io_sound_ch3 = 8;
       }
     }

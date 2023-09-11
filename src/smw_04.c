@@ -491,7 +491,7 @@ void sub_485A7() {  // 0485a7
 }
 
 void DrawOverworldPlayer() {  // 04862e
-  uint16 v7;
+  /*uint16 v7;
   uint16 v2;
   uint16 v5;
   uint8 r6, r7;
@@ -565,7 +565,7 @@ void DrawOverworldPlayer() {  // 04862e
       sprites_oamtile_size_buffer[53] = 0;
       sprites_oamtile_size_buffer[54] = 0;
     }
-  }
+  }*/
 }
 
 void DrawOverworldPlayer_DrawHalo(uint16 k, uint16 r4, PointU8 pt) {  // 048789

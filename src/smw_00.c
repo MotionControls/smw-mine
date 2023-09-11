@@ -4961,7 +4961,7 @@ LABEL_31:
 }
 
 void UpdatePlayerSpritePosition() {  // 00dc2d
-  uint8 tmp8a = player_yspeed;
+  /*uint8 tmp8a = player_yspeed;
   if (player_wall_walk_status) {
     uint8 v0 = player_xspeed;
     player_yspeed = (player_wall_walk_status & 1) ? -v0 : v0;
@@ -4973,11 +4973,11 @@ void UpdatePlayerSpritePosition() {  // 00dc2d
   uint16 ty = player_sub_ypos + (uint8)(player_yspeed * 16);
   player_sub_ypos = ty;
   player_ypos += ((int8)player_yspeed >> 4) + (ty >> 8);
-  player_yspeed = tmp8a;
+  player_yspeed = tmp8a;*/
 }
 
 void PlayerDraw() {  // 00e2bd
-  int8 v4;
+  /*int8 v4;
   if (player_hide_player_tile_flags != 0xFF)
     PlayerGFXRt_01EA70();
   if (timer_player_palette_cycle)
@@ -5088,7 +5088,7 @@ LABEL_18:
       PlayerGFXRt_00E45D(v25, r4 & 0x04, r5 + 2, r14);
     }
     PlayerGFXRt_00F636(r10, r11, r12, r13);
-  }
+  }*/
 }
 
 uint8 PlayerGFXRt_00E45D(uint8 j, uint8 r4, uint8 r5, uint8 r6) {  // 00e45d
@@ -6712,7 +6712,7 @@ void SpawnPlayerTurnAroundSmoke_00FE72(uint8 j) {  // 00fe72
 }
 
 void SpawnPlayerFireball() {  // 00fea8
-  uint8 v0 = 9;
+  /*uint8 v0 = 9;
   while (ext_spr_spriteid[v0]) {
     if (--v0 == 7)
       return;
@@ -6728,6 +6728,7 @@ void SpawnPlayerFireball() {  // 00fea8
   SetHiLo(&ext_spr_xpos_hi[v0], &ext_spr_xpos_lo[v0], player_xpos + PAIR16(kSpawnPlayerFireball_xhi[dir], kSpawnPlayerFireball_xlo[dir]));
   SetHiLo(&ext_spr_ypos_hi[v0], &ext_spr_ypos_lo[v0], player_ypos + kSpawnPlayerFireball_ylo[dir]);
   ext_spr_table1779[v0] = player_current_layer_priority;
+  */
 }
 
 void Spr088_WingedCage_SyncPlayerPosToLayer1() {  // 00ff07
