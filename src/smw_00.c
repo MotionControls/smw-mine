@@ -4,6 +4,8 @@
 #include "variables.h"
 #include "assets/smw_assets.h"
 
+int canPlayerAirJump = 1;
+
 static FuncV *const kInitAndMainLoop_GameModePtrs[42] = {
     &GameMode00_LoadNintendoPresents,
     &GameMode01_ShowNintendoPresents,
@@ -2143,7 +2145,7 @@ void GameMode0C_LoadOverworld() {  // 00a087
   uint8 v0 = player_current_character;
   if ((player_current_life_count & 0x80) != 0)
     ++pointer_display_overworld_prompt;
-  players_lives[player_current_character] = player_current_life_count;
+  players_lives[player_current_character] = 99;//player_current_life_count;
   players_power_up[v0] = player_current_power_up;
   players_coins[v0] = player_current_coin_count;
   uint8 v1 = yoshi_carry_over_levels_flag;
@@ -2225,6 +2227,7 @@ void GameMode0E_ShowOverworld() {  // 00a1be
 
 void GameMode14_InLevel() {  // 00a1da
   if (misc_display_message) {
+    misc_display_message = 3;
     DisplayMessage();
   } else {
     uint8 v0 = flag_active_bonus_game;
@@ -3290,7 +3293,7 @@ LABEL_15:;
 }
 
 void EraseYoshiCoin(GenTileArgs *gta) {  // 00c1ac
-  SetItemMemoryBit();
+  /*SetItemMemoryBit();
   uint16 v0 = blocks_ypos & 0x1F0 | ((uint8)blocks_xpos >> 4);
   gta->ptr_lo_map16_data[v0] = gta->ptr_lo_map16_data[v0 + 16] = 0x25;
   uint16 r0w = *(uint16 *)&misc_level_layout_flags;
@@ -3347,7 +3350,7 @@ LABEL_14:;
   }
   uint16 v3 = v2 + 512;
   if (v3 > gta->r14)
-    goto LABEL_14;
+    goto LABEL_14;*/
 }
 
 static const uint16 kChangeNetDoorTiles_Open[72] = { 0x9c99, 0x1c8b, 0x1c8b, 0x1c8b, 0x1c8b, 0xdc99, 0x1c9b, 0x1cf8, 0x1cf8, 0x1cf8, 0x1cf8, 0x5c9b, 0x1c9b, 0x1cf8, 0x1cf8, 0x1cf8, 0x1cf8, 0x5c9b, 0x1c9b, 0x1cf8, 0x1cf8, 0x1cf8, 0x1cf8, 0x5c9b, 0x1c9b, 0x1cf8, 0x1cf8, 0x1cf8, 0x1cf8, 0x5c9b, 0x1c99, 0x9c8b, 0x9c8b, 0x9c8b, 0x9c8b, 0x5c99,  };
@@ -3936,8 +3939,9 @@ void PlayerState00_00CCE0() {  // 00cce0
 }
 
 void PlayerState00_00CD24() {  // 00cd24
-  if ((player_yspeed & 0x80) != 0 && (player_blocked_flags & 8) != 0)
-    player_yspeed = 0;
+  if ((player_yspeed & 0x80) != 0 && (player_blocked_flags & 8) != 0){
+    //player_yspeed = 0;
+  }
   UpdatePlayerSpritePosition();
   HandlePlayerLevelCollision();
   PlayerState00_00CD36();
@@ -3981,6 +3985,9 @@ void PlayerState00_00CD8B() {  // 00cd8b
   PlayerState00_00CD8F();
 }
 
+/*
+      Riding Yoshi
+*/
 void PlayerState00_00CD8F() {  // 00cd8f
   uint8 v0 = player_riding_yoshi_flag;
   if (player_riding_yoshi_flag) {
@@ -3989,6 +3996,7 @@ void PlayerState00_00CD8F() {  // 00cd8f
       if (timer_yoshi_tongue_is_out < 0xC)
         v0 = 4;
     }
+    SpawnPlayerFireball();
     uint8 v1 = kPlayerState_OnYoshiAnimations[v0 - 1];
     if (v0 == 1 && player_ducking_flag)
       v1 = 29;
@@ -4257,7 +4265,7 @@ void CheckPowerUpSpecificPlayerAttacks() {  // 00d062
 
 void PlayerState09_Death() {  // 00d0b6
   player_current_power_up = 0;
-  player_current_pose = 62;
+  player_current_pose = 66;//62;
   if ((counter_global_frames & 3) == 0)
     --player_anim_timer;
   if (!player_anim_timer) {
@@ -4446,10 +4454,14 @@ LABEL_6:
   UpdatePlayerSpritePosition();
 }
 
+/*
+      Player ground physics.
+*/
 void HandlePlayerPhysics() {  // 00d5f2
   uint8 v4;
   uint8 r1 = 0;
   if (!player_in_air_flag) {
+    canPlayerAirJump = 1;
     player_ducking_flag = 0;
     if (!player_sliding_on_ground && (io_controller_hold1 & 4) != 0) {
       player_ducking_flag = io_controller_hold1 & 4;
@@ -4604,9 +4616,20 @@ void HandlePlayerPhysics_00D772(uint8 k, uint8 j) {  // 00d772
     *(uint16 *)&player_sub_xspeed = kHandlePlayerPhysics_DATA_00D5C9[v3];
 }
 
+/*
+      Handles player physics in air (no shit).
+*/
 void HandlePlayerPhysics_InAir() {  // 00d7e4
+  //printf("Player YSpeed: %d \n", player_yspeed);
   uint8 v0, v6;
+  //printf("canPlayerAirJump: %d\n", canPlayerAirJump);
   if (!player_cape_flying_phase) {
+    // Double Spin-Jump
+    if(((io_controller_press2) & 0x80) != 0 && player_current_power_up == 0 && canPlayerAirJump == 1 && player_yspeed < 100 && !player_spin_jump_flag){
+      canPlayerAirJump = 0;
+      player_spin_jump_flag = 1;
+      player_yspeed = 174;//kHandlePlayerPhysics_JumpHeightTable;
+    }
     if (!player_in_air_flag || player_spin_jump_flag | (uint8)(player_riding_yoshi_flag | player_carrying_something_flag2) ||
         (int8)player_sliding_on_ground > 0 || (player_sliding_on_ground = 0, player_current_power_up != 2) ||
         (player_yspeed & 0x80) != 0 || !timer_wait_before_cape_flight_begins) {
@@ -4961,23 +4984,23 @@ LABEL_31:
 }
 
 void UpdatePlayerSpritePosition() {  // 00dc2d
-  /*uint8 tmp8a = player_yspeed;
+  uint8 tmp8a = player_yspeed;
   if (player_wall_walk_status) {
     uint8 v0 = player_xspeed;
     player_yspeed = (player_wall_walk_status & 1) ? -v0 : v0;
   }
   uint16 tx = player_sub_xpos + (uint8)(player_xspeed * 16);
   player_sub_xpos = tx;
-  player_xpos += ((int8)player_xspeed >> 4) + (tx >> 8);
+  player_xpos += 1.25*(((int8)player_xspeed >> 4) + (tx >> 8));//((int8)player_xspeed >> 4) + (tx >> 8);
 
   uint16 ty = player_sub_ypos + (uint8)(player_yspeed * 16);
   player_sub_ypos = ty;
-  player_ypos += ((int8)player_yspeed >> 4) + (ty >> 8);
-  player_yspeed = tmp8a;*/
+  player_ypos += 1.25*(((int8)player_yspeed >> 4) + (ty >> 8));//((int8)player_yspeed >> 4) + (ty >> 8);
+  player_yspeed = tmp8a;
 }
 
 void PlayerDraw() {  // 00e2bd
-  /*int8 v4;
+  int8 v4;
   if (player_hide_player_tile_flags != 0xFF)
     PlayerGFXRt_01EA70();
   if (timer_player_palette_cycle)
@@ -5088,7 +5111,7 @@ LABEL_18:
       PlayerGFXRt_00E45D(v25, r4 & 0x04, r5 + 2, r14);
     }
     PlayerGFXRt_00F636(r10, r11, r12, r13);
-  }*/
+  }
 }
 
 uint8 PlayerGFXRt_00E45D(uint8 j, uint8 r4, uint8 r5, uint8 r6) {  // 00e45d
@@ -6143,10 +6166,15 @@ void PlayerState00_CheckPlayerPitFall() {  // 00f595
   if (!sign16(mirror_current_layer1_ypos - 128 - player_ypos))
     player_ypos = mirror_current_layer1_ypos - 128;
   if ((int8)(HIBYTE(player_on_screen_pos_y) - 1) >= 0) {
-    if (in_yoshi_wings_bonus_area)
+    if (in_yoshi_wings_bonus_area){
       PlayerState00_00C95B();
-    else
-      DamagePlayer_PitFall();
+    }else{
+      player_ypos -= 64;
+      if(player_yspeed >= 40 && player_yspeed <= 100)
+        player_yspeed = 176;
+      printf("Pit fall Player YSpeed: %d \n", player_yspeed);
+      //DamagePlayer_PitFall();
+    }
   }
 }
 
@@ -6712,7 +6740,7 @@ void SpawnPlayerTurnAroundSmoke_00FE72(uint8 j) {  // 00fe72
 }
 
 void SpawnPlayerFireball() {  // 00fea8
-  /*uint8 v0 = 9;
+  uint8 v0 = 9;
   while (ext_spr_spriteid[v0]) {
     if (--v0 == 7)
       return;
@@ -6728,7 +6756,6 @@ void SpawnPlayerFireball() {  // 00fea8
   SetHiLo(&ext_spr_xpos_hi[v0], &ext_spr_xpos_lo[v0], player_xpos + PAIR16(kSpawnPlayerFireball_xhi[dir], kSpawnPlayerFireball_xlo[dir]));
   SetHiLo(&ext_spr_ypos_hi[v0], &ext_spr_ypos_lo[v0], player_ypos + kSpawnPlayerFireball_ylo[dir]);
   ext_spr_table1779[v0] = player_current_layer_priority;
-  */
 }
 
 void Spr088_WingedCage_SyncPlayerPosToLayer1() {  // 00ff07

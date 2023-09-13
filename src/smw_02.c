@@ -870,7 +870,7 @@ LABEL_7:
     mextspr_spriteid[j] = 1;
     SetHiLo(&mextspr_xpos_hi[j], &mextspr_xpos_lo[j], blocks_xpos + kSpawnBrickPieces_xlo[v1]);
     SetHiLo(&mextspr_ypos_hi[j], &mextspr_ypos_lo[j], blocks_ypos + kSpawnBrickPieces_ylo[v1]);
-    mextspr_yspeed[j] = 30; //kSpawnBrickPieces_InitialYSpeed[v1];
+    mextspr_yspeed[j] = -8; //kSpawnBrickPieces_InitialYSpeed[v1];
     mextspr_xspeed[j] = kSpawnBrickPieces_InitialXSpeed[v1];
     mextspr_timer[j] = r0;
     --v1;

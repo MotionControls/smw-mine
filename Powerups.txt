@@ -1,0 +1,16 @@
+0	;	Normal
+1	;	Super
+2	;	Cape
+3	;	Fire
+4	;	Purple
+5	;	Diagonal
+6	;	Caked Out 1
+7	;	Caked Out 2
+8	;	Negative
+9	;	Caked Out 3
+10	;	Even More Diagonal
+11	;	Vineboom
+12	;	Green
+13	;	Frozen
+14	;	Red
+15	;	Spinning

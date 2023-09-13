@@ -74,7 +74,7 @@ enum {
   kDefaultSamples = 2048,
 };
 
-static const char kWindowTitle[] = "SMW";
+static const char kWindowTitle[] = /*"SMW"*/"SUUUUPAH MAAAAAURIO WORLD";
 static uint32 g_win_flags = SDL_WINDOW_RESIZABLE;
 static SDL_Window *g_window;
 
@@ -314,6 +314,7 @@ static void SdlRenderer_EndDraw(void) {
   //  printf("%f ms\n", v * 1000);
   SDL_RenderClear(g_renderer);
   SDL_RenderCopy(g_renderer, g_texture, &g_sdl_renderer_rect, NULL);
+  SDL_SetRenderDrawColor(g_renderer, 255, 0, 0, 50);
   SDL_RenderPresent(g_renderer); // vsyncs to 60 FPS?
 }
 

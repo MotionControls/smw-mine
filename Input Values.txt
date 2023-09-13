@@ -1,0 +1,3 @@
+0x80			;	Pressed?
+io_controller_press2	;	A / Spin Jump
+io_controller_press1	;	B / Jump

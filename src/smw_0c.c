@@ -1223,6 +1223,7 @@ void GameMode19_Cutscene_LarryCutscene() {  // 0cca72
 }
 
 void DrawThankYouSpeechBubble() {  // 0cca8f
+  CheckIfPlayerCanEndCastleDestructionCutscene();
   if (LOBYTE(get_PointU16(l1_l2_scroll_spr_speed, 0)[1].x)) {
     uint8 v0 = 0;
     uint8 v1 = 0;
@@ -1411,6 +1412,7 @@ void HandleTNTExplosion_TNTExplosionDraw() {  // 0cccb6
 }
 
 void HandleCastleCrumblingDown() {  // 0ccd23
+  CheckIfPlayerCanEndCastleDestructionCutscene();
   if ((uint8)mirror_current_layer1_ypos == 0xC0) {
     mirror_current_layer1_xpos = 0;
   } else {
@@ -1610,7 +1612,7 @@ void DelayTNTExplosionUntilPlayerComesBy() {  // 0ccfc5
 }
 
 void CheckIfPlayerCanEndCastleDestructionCutscene() {  // 0ccfde
-  if (!(HIBYTE(get_PointU16(l1_l2_scroll_spr_speed, 0)[1].y) | l1_l2_scroll_spr_current_state[1]) &&
+  if (/*!(HIBYTE(get_PointU16(l1_l2_scroll_spr_speed, 0)[1].y) | l1_l2_scroll_spr_current_state[1]) &&*/
       ((io_controller_press2 | io_controller_press1) & 0xC0) != 0) {
     l1_l2_scroll_spr_current_state[0] = 0;
     misc_game_mode = 11;
@@ -1659,6 +1661,7 @@ LABEL_12:;
   uint8 r2 = v0;
   uint8 r1 = 95;
   DrawCastleDestructionCastleDoor_Entry3(8, r0, r1, r2);
+  CheckIfPlayerCanEndCastleDestructionCutscene();
 }
 
 void DrawCutsceneContactEffect() {  // 0cd069
@@ -1798,6 +1801,7 @@ void InitializeTNTExplosion() {  // 0cd295
 
 void InitializeCastleCrumblingDown() {  // 0cd2b2
   io_sound_ch1 = 33;
+  CheckIfPlayerCanEndCastleDestructionCutscene();
   InitializeCastleDust();
   HandleCastleCrumblingDown();
 }
