@@ -2469,8 +2469,9 @@ void ExtSpr05_MarioFireball(uint8 k) {  // 029faf
   }
   ++ext_spr_table1765[k];
   CheckPlayerFireballToNormalSpriteCollision(k);
-  if (sign8(ext_spr_yspeed[k] - 48))
-    ext_spr_yspeed[k] += 4;
+  /*if (sign8(ext_spr_yspeed[k] - 48))
+    ext_spr_yspeed[k] += 4;*/
+  ext_spr_yspeed[k] = 0;
   ExtCollOut eco;
   if (HandleExtendedSpriteLevelCollision(k, &eco) & 1) {
     if (++ext_spr_sub_xpos[k] >= 2) {
@@ -7079,18 +7080,19 @@ void SprXXX_SuperKoopas_02EBCA(uint8 k) {  // 02ebca
 }
 
 void SprXXX_SuperKoopas_GroundedSuperKoopaState01_Jumping(uint8 k) {  // 02ebd1
-  uint8 v1 = spr_yspeed[k] + 2;
-  spr_yspeed[k] = v1;
-  if (!sign8(v1 - 20))
+  //uint8 v1 = spr_yspeed[k] + 2;
+  spr_yspeed[k] = spr_yspeed[k] + 2;//v1;
+  if (!sign8(/*v1*/spr_yspeed[k] - 20))
     ++spr_table00c2[k];
   SprXXX_SuperKoopas_02EBB5(k, 0);
   ++spr_table1602[k];
 }
 
 void SprXXX_SuperKoopas_GroundedSuperKoopaState02_Flying(uint8 k) {  // 02ebe7
-  spr_xspeed[k] = kSprXXX_SuperKoopas_MaxXSpeed[spr_table157c[k]];
-  if (spr_yspeed[k])
-    spr_yspeed[k]--;
+  spr_xspeed[k] = -40;//kSprXXX_SuperKoopas_MaxXSpeed[spr_table157c[k]];
+  /*if (spr_yspeed[k])
+    spr_yspeed[k]--;*/
+  spr_yspeed[k] = 0;
   SprXXX_SuperKoopas_02EBF8(k);
 }
 

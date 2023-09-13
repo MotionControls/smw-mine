@@ -1025,7 +1025,6 @@ void BufferScrollingTiles_Layer2_Background() {  // 058d7a
   } while (r8 < 0x1B0);
 }
 
-
 void DisplayMessage() {  // 05b10c
   int16 v7;
 

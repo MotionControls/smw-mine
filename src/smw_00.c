@@ -4624,18 +4624,19 @@ void HandlePlayerPhysics_InAir() {  // 00d7e4
   uint8 v0, v6;
   //printf("canPlayerAirJump: %d\n", canPlayerAirJump);
   if (!player_cape_flying_phase) {
-    // Double Spin-Jump
-    if(((io_controller_press2) & 0x80) != 0 && player_current_power_up == 0 && canPlayerAirJump == 1 && player_yspeed < 100 && !player_spin_jump_flag){
-      canPlayerAirJump = 0;
-      player_spin_jump_flag = 1;
-      player_yspeed = 174;//kHandlePlayerPhysics_JumpHeightTable;
-    }
     if (!player_in_air_flag || player_spin_jump_flag | (uint8)(player_riding_yoshi_flag | player_carrying_something_flag2) ||
         (int8)player_sliding_on_ground > 0 || (player_sliding_on_ground = 0, player_current_power_up != 2) ||
         (player_yspeed & 0x80) != 0 || !timer_wait_before_cape_flight_begins) {
 LABEL_43:
       if (player_in_air_flag) {
         uint8 v5 = 0;
+        // Double Spin-Jump
+        if(((io_controller_press2) & 0x80) != 0 && player_current_power_up == 0 && canPlayerAirJump == 1/* && player_yspeed < 100 */&& !player_spin_jump_flag){
+          canPlayerAirJump = 0;
+          player_spin_jump_flag = 1;
+          player_yspeed = 174;
+          io_sound_ch1 = 9;   // Play cape fly sound
+        }
         if (player_riding_yoshi_flag && yoshi_yoshi_has_wings >> 1) {
           v6 = 2;
           if (player_current_power_up != 2)
@@ -6266,6 +6267,7 @@ void HandleStandardLevelCameraScroll() {  // 00f6db
   mirror_current_layer1_ypos = pt->y;
   mirror_current_layer2_xpos = pt[1].x;
   mirror_current_layer2_ypos = pt[1].y;
+
   if (misc_level_layout_flags & 1) {
     HandleStandardLevelCameraScroll_00F7F4((camera_last_screen_vert - 1) << 8);
     if (flag_layer1_horiz_scroll_level_setting) {
@@ -6742,7 +6744,7 @@ void SpawnPlayerTurnAroundSmoke_00FE72(uint8 j) {  // 00fe72
 void SpawnPlayerFireball() {  // 00fea8
   uint8 v0 = 9;
   while (ext_spr_spriteid[v0]) {
-    if (--v0 == 7)
+    if (--v0 == 0/*7*/)
       return;
   }
   io_sound_ch3 = 6;

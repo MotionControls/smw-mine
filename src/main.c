@@ -446,21 +446,24 @@ error_reading:;
   g_spc_player->initialize(g_spc_player);
 
   bool enable_audio = true;
+  Uint32* testWavLength;
   if (enable_audio) {
     SDL_AudioSpec want = { 0 }, have;
-    want.freq = g_config.audio_freq;
+    /*want.freq = g_config.audio_freq;
     want.format = AUDIO_S16;
     want.channels = 2;
     want.samples = g_config.audio_samples;
     want.callback = &AudioCallback;
-    g_audio_device = SDL_OpenAudioDevice(NULL, 0, &want, &have, 0);
+    g_audio_device = SDL_OpenAudioDevice(NULL, 0, &want, &have, 0);*/
+    SDL_LoadWAV("./assets/mine/music/test.wav", &want, &g_audiobuffer, &testWavLength);
+    g_audio_device = SDL_OpenAudioDevice(NULL, 0, &want, NULL, 0);
     if (g_audio_device == 0) {
       printf("Failed to open audio device: %s\n", SDL_GetError());
       return 1;
     }
     g_audio_channels = 2;
     g_frames_per_block = (534 * have.freq) / 32000;
-    g_audiobuffer = (uint8 *)calloc(g_frames_per_block * have.channels * sizeof(int16), 1);
+    //g_audiobuffer = (uint8 *)calloc(g_frames_per_block * have.channels * sizeof(int16), 1);
   }
 
   PpuBeginDrawing(g_snes->ppu, g_pixels, 256 * 4, 0);
@@ -485,6 +488,13 @@ error_reading:;
   uint8 audiopaused = true;
   bool has_bug_in_title = false;
   GamepadInfo *gi;
+
+  // Test Audio
+  printf("Testing audio.\n");
+  /*SDL_AudioSpec testAudio;
+  Uint8* testAudioLen;
+  if(SDL_LoadWAV("./assets/mine/music/test.wav", &testAudio, &g_audiobuffer, &testAudioLen) == NULL)
+    printf("Shit don't work yo.\n");*/
 
   while (running) {
     SDL_Event event;
@@ -541,6 +551,11 @@ error_reading:;
     }
 
     if (g_paused != audiopaused) {
+      // Test Audio
+      printf("Attempting to play the audio.\n");
+      if(SDL_QueueAudio(g_audio_device, g_audiobuffer, testWavLength) < 0)
+        printf("Couldn't queue audio: %s\n", SDL_GetError());
+      
       audiopaused = g_paused;
       if (g_audio_device)
         SDL_PauseAudioDevice(g_audio_device, audiopaused);

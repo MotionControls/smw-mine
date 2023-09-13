@@ -5475,13 +5475,16 @@ void SprXXX_PowerUps_GiveMarioMushroom(uint8 k) {  // 01c561
   player_anim_timer = 47;  // bug fixed!
   flag_sprites_locked = 47;
   SprXXX_PowerUps_01C56F(k);
-}
-
-void SprXXX_PowerUps_01C56F(uint8 k) {  // 01c56f
   if (!spr_table1534[k])
     GivePoints(k, 4);
-  io_sound_ch1 = 10;
+  io_sound_ch1 = 16;//10;
 }
+
+
+void SprXXX_PowerUps_01C56F(uint8 k) {  // 01c56f
+  ;
+}
+
 
 void GivePlayerStarPower() {  // 01c580
   timer_star_power = -1;

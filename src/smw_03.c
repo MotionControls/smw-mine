@@ -1205,6 +1205,7 @@ void Spr0B9_MessageBox(uint8 k) {  // 038d6f
     io_sound_ch3 = 34;
     spr_decrementing_table1558[k] = 0;
     spr_table00c2[k] = 0;
+    // When confused, the below value defaults to the Yoshi save msg.
     misc_display_message = ((spr_xpos_lo[k] & 0x10) != 0) + 1;
   }
   uint8 v1 = spr_decrementing_table1558[k] >> 1;
