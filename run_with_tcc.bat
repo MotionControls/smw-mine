@@ -1,6 +1,8 @@
 @echo off
 
-set SDL2=third_party\SDL2-2.28.1
+REM set SDL2=third_party\SDL2-2.28.1
+set SDL2=third_party\SDL2-2.28.3
+set SDL2MIX=third_party\SDL2_mixer-2.6.3
 
 IF NOT EXIST "third_party\tcc\tcc.exe" (
   ECHO:
@@ -25,12 +27,23 @@ IF NOT EXIST "%SDL2%\lib\x64\SDL2.dll" (
   REM
 )
 
+IF NOT EXIST "%SDL2MIX%\lib\x64\SDL2_mixer.dll" (
+  ECHO:
+  ECHO ERROR: SDL2_mixer is not unzipped properly into %SDL2MIX%
+  ECHO:
+  PAUSE
+  EXIT /B 1
+) ELSE (
+  REM
+)
+
 
 echo Building with TCC...
-third_party\tcc\tcc.exe -osmw.exe -DCOMPILER_TCC=1 -DSTBI_NO_SIMD=1 -DHAVE_STDINT_H=1 -D_HAVE_STDINT_H=1 -DSYSTEM_VOLUME_MIXER_AVAILABLE=0 -I%SDL2%/include -L%SDL2%/lib/x64 -lSDL2 -I. src/*.c src/snes/*.c third_party/gl_core/gl_core_3_1.c smb1/*.c smbll/*.c
+third_party\tcc\tcc.exe -osmw.exe -DCOMPILER_TCC=1 -DSTBI_NO_SIMD=1 -DHAVE_STDINT_H=1 -D_HAVE_STDINT_H=1 -DSYSTEM_VOLUME_MIXER_AVAILABLE=0 -I%SDL2%/include -L%SDL2%/lib/x64 -I%SDL2MIX%/include -L%SDL2MIX%/lib/x64 -lSDL2 -lSDL2_mixer -I. src/*.c src/snes/*.c third_party/gl_core/gl_core_3_1.c smb1/*.c smbll/*.c
 IF ERRORLEVEL 1 goto GETOUT
 
 copy %SDL2%\lib\x64\SDL2.dll .
+copy %SDL2MIX%\lib\x64\SDL2_mixer.dll .
 
 echo Running...
 smw.exe 

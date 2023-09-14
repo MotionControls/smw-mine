@@ -1711,7 +1711,8 @@ void OwPrompt07_DisplayingSavePrompt() {  // 009bb0
     return;
   if (!t) {
     io_sound_ch3 = 0;
-    io_sound_ch1 = 5;
+    //io_sound_ch1 = 5;
+    Mix_PlayChannel(-1, gSound_SavePrompt, 0);
     SaveGame();
   }
   CloseOwPrompt();
@@ -4635,7 +4636,9 @@ LABEL_43:
           canPlayerAirJump = 0;
           player_spin_jump_flag = 1;
           player_yspeed = 174;
-          io_sound_ch1 = 9;   // Play cape fly sound
+          //io_sound_ch1 = 9;   // Play cape fly sound
+          Mix_PlayChannel(-1,gSound_SpinJump,0);  // Play "UUMF"
+          printf(Mix_GetError());
         }
         if (player_riding_yoshi_flag && yoshi_yoshi_has_wings >> 1) {
           v6 = 2;

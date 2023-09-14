@@ -16,3 +16,7 @@ smw_assets.dat
 __pycache__
 /enhanced/
 *.sfc
+/third_party/
+SDL2_mixer.dll
+*.mp3
+*.wav

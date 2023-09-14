@@ -23,6 +23,7 @@
 #include "config.h"
 #include "util.h"
 #include "smw_spc_player.h"
+#include "variables.h"
 
 #include "snes/snes.h"
 #ifdef __SWITCH__
@@ -215,42 +216,13 @@ static void DrawPpuFrameWithPerf(void) {
   g_renderer_funcs.EndDraw();
 }
 
-static SDL_mutex *g_audio_mutex;
-static uint8 *g_audiobuffer, *g_audiobuffer_cur, *g_audiobuffer_end;
-static int g_frames_per_block;
-static uint8 g_audio_channels;
-static SDL_AudioDeviceID g_audio_device;
-
 void RtlApuLock(void) {
-  SDL_LockMutex(g_audio_mutex);
+  //SDL_LockMutex(g_audio_mutex);
 }
 
 void RtlApuUnlock(void) {
-  SDL_UnlockMutex(g_audio_mutex);
+  //SDL_UnlockMutex(g_audio_mutex);
 }
-
-static void SDLCALL AudioCallback(void *userdata, Uint8 *stream, int len) {
-  if (SDL_LockMutex(g_audio_mutex)) Die("Mutex lock failed!");
-  while (len != 0) {
-    if (g_audiobuffer_end - g_audiobuffer_cur == 0) {
-      RtlRenderAudio((int16 *)g_audiobuffer, g_frames_per_block, g_audio_channels);
-      g_audiobuffer_cur = g_audiobuffer;
-      g_audiobuffer_end = g_audiobuffer + g_frames_per_block * g_audio_channels * sizeof(int16);
-    }
-    int n = IntMin(len, g_audiobuffer_end - g_audiobuffer_cur);
-    if (g_sdl_audio_mixer_volume == SDL_MIX_MAXVOLUME) {
-      memcpy(stream, g_audiobuffer_cur, n);
-    } else {
-      SDL_memset(stream, 0, n);
-      SDL_MixAudioFormat(stream, g_audiobuffer_cur, AUDIO_S16, n, g_sdl_audio_mixer_volume);
-    }
-    g_audiobuffer_cur += n;
-    stream += n;
-    len -= n;
-  }
-  SDL_UnlockMutex(g_audio_mutex);
-}
-
 
 // State for sdl renderer
 static SDL_Renderer *g_renderer;
@@ -353,6 +325,11 @@ int main(int argc, char** argv) {
   }
   ParseConfigFile(config_file);
 
+  // Init SDL_mixer & Open audio device.
+  Mix_Init(MIX_INIT_MP3);
+  if(Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
+    printf("Failed to init SDL_mixer: %s\n", Mix_GetError());
+
   LoadAssets();
 
   g_gamepad[0].joystick_id = g_gamepad[1].joystick_id = -1;
@@ -434,9 +411,6 @@ error_reading:;
   if (!g_renderer_funcs.Initialize(window))
     return 1;
 
-  g_audio_mutex = SDL_CreateMutex();
-  if (!g_audio_mutex) Die("No mutex");
-
   if (g_rtl_game_info->game_id == kGameID_SMB1 ||
       g_rtl_game_info->game_id == kGameID_SMBLL)
     g_spc_player = SmasSpcPlayer_Create();
@@ -445,30 +419,10 @@ error_reading:;
 
   g_spc_player->initialize(g_spc_player);
 
-  bool enable_audio = true;
-  Uint32* testWavLength;
+  /*bool enable_audio = true;
   if (enable_audio) {
-    SDL_AudioSpec want = { 0 }, have;
-    /* Comment out for custom music. */
-    want.freq = g_config.audio_freq;
-    want.format = AUDIO_S16;
-    want.channels = 2;
-    want.samples = g_config.audio_samples;
-    want.callback = &AudioCallback;
-    g_audio_device = SDL_OpenAudioDevice(NULL, 0, &want, &have, 0);
-    /* End Comment */
-    // Uncomment for custom music.
-    //SDL_LoadWAV("./assets/mine/music/test.wav", &want, &g_audiobuffer, &testWavLength);
-    g_audio_device = SDL_OpenAudioDevice(NULL, 0, &want, NULL, 0);
-    if (g_audio_device == 0) {
-      printf("Failed to open audio device: %s\n", SDL_GetError());
-      return 1;
-    }
-    g_audio_channels = 2;
-    g_frames_per_block = (534 * have.freq) / 32000;
-    // Comment out for custom music.
-    g_audiobuffer = (uint8 *)calloc(g_frames_per_block * have.channels * sizeof(int16), 1);
-  }
+
+  }*/
 
   PpuBeginDrawing(g_snes->ppu, g_pixels, 256 * 4, 0);
   PpuBeginDrawing(g_my_ppu, g_my_pixels, 256 * 4, 0);
@@ -548,14 +502,7 @@ error_reading:;
     }
 
     if (g_paused != audiopaused) {
-      // Test Audio
-      printf("Attempting to play the audio.\n");
-      if(SDL_QueueAudio(g_audio_device, g_audiobuffer, testWavLength) < 0)
-        printf("Couldn't queue audio: %s\n", SDL_GetError());
-      
-      audiopaused = g_paused;
-      if (g_audio_device)
-        SDL_PauseAudioDevice(g_audio_device, audiopaused);
+      /* TODO: Pause Music */
     }
 
     if (g_paused) {
@@ -614,10 +561,9 @@ error_reading:;
     HandleCommand(kKeys_Save + 0, true);
 
   // clean sdl
-  SDL_PauseAudioDevice(g_audio_device, 1);
-  SDL_CloseAudioDevice(g_audio_device);
-  SDL_DestroyMutex(g_audio_mutex);
-  free(g_audiobuffer);
+  Mix_FreeChunk(gSoundCh1);
+  Mix_FreeMusic(gMusic);
+  Mix_Quit();
 
   g_renderer_funcs.Destroy();
 
@@ -953,6 +899,106 @@ static void LoadAssets() {
     g_asset_ptrs[i] = data + offset;
     offset += size;
   }
+
+  // Load custom sounds & music
+  /*gMusic = Mix_LoadMUS("./assets/mine/music/testmusic.mp3");
+  if(gMusic == NULL)
+    printf("Cannot load music: %s\n", Mix_GetError());
+  gSoundCh1 = Mix_LoadWAV("./assets/mine/music/testsfx.wav");
+  if(gSoundCh1 == NULL)
+    printf("Cannot load sfx: %s\n", Mix_GetError());*/
+  gSound_HitHead = Mix_LoadWAV("./assets/mine/sfx/default/bump.wav");
+  gSound_SpinJumpBounce = Mix_LoadWAV("./assets/mine/sfx/default/stomp.wav");
+  gSound_Kick = Mix_LoadWAV("./assets/mine/sfx/default/kick.wav");
+  gSound_HurtOrPipe = Mix_LoadWAV("./assets/mine/sfx/default/pipe.wav");
+  gSound_Checkpoint = Mix_LoadWAV("./assets/mine/sfx/default/checkpoint.wav");
+  gSound_YoshiGulp = Mix_LoadWAV("./assets/mine/sfx/default/yoshi-gulp.wav");
+  gSound_DryBonesBreak = Mix_LoadWAV("./assets/mine/sfx/default/dry-bones-crumble.wav");
+  gSound_SpinJumpKill = Mix_LoadWAV("./assets/mine/sfx/default/super-stomp.wav");
+  gSound_Fly = Mix_LoadWAV("./assets/mine/sfx/default/cape-fly.wav");
+  gSound_Powerup = Mix_LoadWAV("./assets/mine/sfx/default/powerup.wav");
+  gSound_SwitchBlock = Mix_LoadWAV("./assets/mine/sfx/default/switch.wav");
+  gSound_ItemTransform = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_Cape = Mix_LoadWAV("./assets/mine/sfx/default/cape-acquire.wav");
+  gSound_Swim = Mix_LoadWAV("./assets/mine/sfx/default/swim.wav");
+  gSound_HurtWhileFlying = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_Magic = Mix_LoadWAV("./assets/mine/sfx/default/magic.wav");
+  gSound_Pause = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_Unpause = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_EnemyStomp1 = Mix_LoadWAV("./assets/mine/sfx/default/stomp.wav");
+  gSound_EnemyStomp2 = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_EnemyStomp3 = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_EnemyStomp4 = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_EnemyStomp5 = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_EnemyStomp6 = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_EnemyStomp7 = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_YoshiCoin = Mix_LoadWAV("./assets/mine/sfx/default/coin-special.wav");
+  gSound_RunningOutOfTime = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_Balloon = Mix_LoadWAV("./assets/mine/sfx/default/balloon.wav");
+  gSound_KoopalingDefeat = Mix_LoadWAV("./assets/mine/sfx/default/boss-defeat.wav");
+  gSound_YoshiSpit = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_ValleyOfBowserAppears = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_LemmyWendyFall = Mix_LoadWAV("./assets/mine/sfx/default/boss-fall.wav");
+  gSound_BlarggRoar = Mix_LoadWAV("./assets/mine/sfx/default/roar.wav");
+  gSound_FireworkWhistle = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_FireworkWhistleLoud = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_FireworkBang = Mix_LoadWAV("./assets/mine/sfx/default/fireworks.wav");
+  gSound_FireworkBangLoud = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_PeachEscapingClownCar = Mix_LoadWAV("./assets/mine/sfx/default/peach-help.wav");
+  gSound_Jump = Mix_LoadWAV("./assets/mine/sfx/default/jump.wav");
+  gSound_Grinder = Mix_LoadWAV("./assets/mine/sfx/default/saw.wav");
+  gSound_Dead = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_GameOver = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_BossDead = Mix_LoadWAV("./assets/mine/sfx/default/boss-defeat.wav");
+  gSound_LevelCleared = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_Keyhole = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_ZoomIn = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_Welcome = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_BonusCleared = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_RescuedEgg = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_BowserZoomOut = Mix_LoadWAV("./assets/mine/sfx/default/clowncar-moveout.wav");
+  gSound_BowserZoomIn = Mix_LoadWAV("./assets/mine/sfx/default/clowncar-moveout-thenin.wav");
+  gSound_BowserDied = Mix_LoadWAV("./assets/mine/sfx/default/clowncar-defeat.wav");
+  gSound_PrincessKiss = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_BowserInterlude = Mix_LoadWAV("./assets/mine/sfx/default/clowncar-reenter.wav");
+  gSound_Coin = Mix_LoadWAV("./assets/mine/sfx/default/coin.wav");
+  gSound_QuestionBlock = Mix_LoadWAV("./assets/mine/sfx/default/sprout-item.wav");
+  gSound_QuestionBlockWithVine = Mix_LoadWAV("./assets/mine/sfx/default/sprout-vine.wav");
+  gSound_SpinJump = Mix_LoadWAV("./assets/mine/sfx/default/spin.wav");
+  gSound_1UP = Mix_LoadWAV("./assets/mine/sfx/default/1up.wav");
+  gSound_Fireball = Mix_LoadWAV("./assets/mine/sfx/default/fireball.wav");
+  gSound_BreakBlock = Mix_LoadWAV("./assets/mine/sfx/default/shatter.wav");
+  gSound_Spring = Mix_LoadWAV("./assets/mine/sfx/default/spring.wav");
+  gSound_BulletBill = Mix_LoadWAV("./assets/mine/sfx/default/bullet.wav");
+  gSound_EggHatch = Mix_LoadWAV("./assets/mine/sfx/default/yoshi-hatch.wav");
+  gSound_InReserveBox = Mix_LoadWAV("./assets/mine/sfx/default/item-get.wav");
+  gSound_OutReserveBox = Mix_LoadWAV("./assets/mine/sfx/default/reserved-item.wav");
+  gSound_Scroll = Mix_LoadWAV("./assets/mine/sfx/default/bump.wav");
+  gSound_Door = Mix_LoadWAV("./assets/mine/sfx/default/door.wav");
+  gSound_DrumRollStart = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_DrumRollEnd = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_YoshiHit = Mix_LoadWAV("./assets/mine/sfx/default/yoshi-escape.wav");
+  gSound_OverworldTileRevealed = Mix_LoadWAV("./assets/mine/sfx/default/map-unlock.wav");
+  gSound_OverworldCastleDestroyed = Mix_LoadWAV("./assets/mine/sfx/default/map-castle-demolish.wav");
+  gSound_YoshiFireball = Mix_LoadWAV("./assets/mine/sfx/default/firebreath.wav");
+  gSound_Thunder = Mix_LoadWAV("./assets/mine/sfx/default/thunder.wav");
+  gSound_ChuckClap = Mix_LoadWAV("./assets/mine/sfx/default/clap.wav");
+  gSound_Bomb = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_BombFuse = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_OverworldBlockSpill = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_ChuckWhistle = Mix_LoadWAV("./assets/mine/sfx/default/whistle.wav");
+  gSound_YoshiMount = Mix_LoadWAV("./assets/mine/sfx/default/yoshi-mount.wav");
+  gSound_LemmyWendyLava = Mix_LoadWAV("./assets/mine/sfx/default/boss-burnt.wav");
+  gSound_YoshiTongue = Mix_LoadWAV("./assets/mine/sfx/default/yoshi-spit.wav");
+  gSound_SavePrompt = Mix_LoadWAV("./assets/mine/sfx/default/map-menu.wav");  // ****** Incorrect
+  gSound_OverworldMoveToTile = Mix_LoadWAV("./assets/mine/sfx/default/map-spot.wav");
+  gSound_PswitchRunningOut = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
+  gSound_YoshiKillEnemy = Mix_LoadWAV("./assets/mine/sfx/default/super-stomp.wav");
+  gSound_Swooper = Mix_LoadWAV("./assets/mine/sfx/default/swooper.wav");
+  gSound_Podoboo = Mix_LoadWAV("./assets/mine/sfx/default/podoboo.wav");
+  gSound_EnemyStunned = Mix_LoadWAV("./assets/mine/sfx/default/stun.wav");
+  gSound_BonusCorrect = Mix_LoadWAV("./assets/mine/sfx/default/correct.wav");
+  gSound_BonusWrong = Mix_LoadWAV("./assets/mine/sfx/default/wrong.wav");
 }
 
 MemBlk FindInAssetArray(int asset, int idx) {
