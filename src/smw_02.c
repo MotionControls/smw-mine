@@ -2500,7 +2500,8 @@ void ExtSpr05_MarioFireball_02A02C(uint8 k) {  // 02a02c
 }
 
 void ExtSpr05_MarioFireball_02A045(uint8 k) {  // 02a045
-  io_sound_ch1 = 1;
+  //io_sound_ch1 = 1;
+  Mix_PlayChannel(-1, gSound_HitHead, 0);
   ext_spr_decrementing_table176f[k] = 15;
   ext_spr_spriteid[k] = 1;
 }
@@ -2543,7 +2544,8 @@ void CheckPlayerFireballToNormalSpriteCollision(uint8 k) {  // 02a0ac
           if ((spr_property_bits166e[i] & 0x10) == 0) {
             if ((spr_property_bits190f[i] & 8) != 0) {
               if (++spr_table1528[i] >= 5) {
-                io_sound_ch1 = 2;
+                //io_sound_ch1 = 2;
+                Mix_PlayChannel(-1, gSound_SpinJumpBounce, 0);
                 spr_current_status[i] = 2;
                 spr_yspeed[i] = -48;
                 spr_xspeed[i] =
@@ -2551,7 +2553,8 @@ void CheckPlayerFireballToNormalSpriteCollision(uint8 k) {  // 02a0ac
                 GivePoints(i, 4);
               }
             } else {
-              io_sound_ch1 = 3;
+              //io_sound_ch1 = 3;
+              Mix_PlayChannel(-1, gSound_Kick, 0);
               spr_spriteid[i] = 33;
               spr_current_status[i] = 8;
               InitializeNormalSpriteRAMTables(i);
@@ -4776,7 +4779,8 @@ void Spr091_CharginChuck_State05_PrepareToJumpOrSplit(uint8 k) {  // 02c582
       } else {
         spr_table00c2[k] = 0;
         spr_decrementing_table1540[k] = 80;
-        io_sound_ch1 = 16;
+        //io_sound_ch1 = 16;
+        Mix_PlayChannel(-1, gSound_Magic, 0);
         misc_scratch7e185e = 0;
         Spr091_CharginChuck_02C5BC(k);
         ++misc_scratch7e185e;
@@ -4864,7 +4868,8 @@ void Spr091_CharginChuck_State01_Charging(uint8 k) {  // 02c6a7
   if ((spr_table1588[k] & 4) != 0) {
     if (spr_table187b[k]) {
       if ((counter_local_frames & 7) == 0)
-        io_sound_ch1 = 1;
+        Mix_PlayChannel(-1, gSound_HitHead, 0);
+        //io_sound_ch1 = 1;
       v1 += 2;
     }
     spr_xspeed[k] = kSpr091_CharginChuck_ChargingXSpeed[v1];
@@ -4919,13 +4924,15 @@ void Spr091_CharginChuck_ProcessPlayerInteraction(uint8 k) {  // 02c79d
 LABEL_5:
       spr_xspeed[k] = 0;
       spr_current_status[k] = 2;
-      io_sound_ch1 = 3;
+      //io_sound_ch1 = 3;
+      Mix_PlayChannel(-1, gSound_Kick, 0);
       GivePoints(k, 3);
       return;
     }
     if (sign8(player_ypos - GetSprYPos(k) + 20)) {
       spr_decrementing_table1564[k] = 5;
-      io_sound_ch1 = 2;
+      Mix_PlayChannel(-1, gSound_SpinJumpBounce, 0);
+      //io_sound_ch1 = 2;
       SpawnContactEffectFromAbove(k);
       BoostMarioSpeed();
       spr_decrementing_table163e[k] = 0;
@@ -7413,7 +7420,8 @@ void Spr086_Wiggler(uint8 k) {  // 02f035
             if (!counter_consecutive_enemies_stomped && sign8(player_yspeed - 8)) {
               DamagePlayer_Hurt();
             } else {
-              io_sound_ch1 = 3;
+              Mix_PlayChannel(-1, gSound_Kick, 0);
+              //io_sound_ch1 = 3;
               BoostMarioSpeed();
               if (!(spr_table15d0[v17] | spr_table151c[v17])) {
                 SpawnContactEffectFromAbove(v17);

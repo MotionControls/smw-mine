@@ -510,6 +510,9 @@ error_reading:;
       continue;
     }
 
+    // Step Music.
+    MF_StepMusic();
+
     // Clear gamepad inputs when joypad directional inputs to avoid wonkiness
     if (g_input_state & 0xf0)
       g_gamepad[0].axis_buttons = 0;
@@ -561,8 +564,7 @@ error_reading:;
     HandleCommand(kKeys_Save + 0, true);
 
   // clean sdl
-  Mix_FreeChunk(gSoundCh1);
-  Mix_FreeMusic(gMusic);
+  /* TODO: Free Mix_Music and Mix_Chunk files. */
   Mix_Quit();
 
   g_renderer_funcs.Destroy();
@@ -686,6 +688,10 @@ static void HandleCommand(uint32 j, bool pressed) {
         SDL_SetRenderDrawColor(g_renderer, 0, 0, 0, 159);
         SDL_RenderFillRect(g_renderer, NULL);
         SDL_RenderPresent(g_renderer);
+        // Pause music.
+        Mix_PauseMusic();
+      }else{
+        Mix_ResumeMusic();
       }
 #endif
       break;
@@ -907,6 +913,12 @@ static void LoadAssets() {
   gSoundCh1 = Mix_LoadWAV("./assets/mine/music/testsfx.wav");
   if(gSoundCh1 == NULL)
     printf("Cannot load sfx: %s\n", Mix_GetError());*/
+  
+  // Music
+  gMusic_Main = Mix_LoadMUS("./assets/mine/music/testmusic.mp3");
+
+  // SFX
+  gSound_ = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
   gSound_HitHead = Mix_LoadWAV("./assets/mine/sfx/default/bump.wav");
   gSound_SpinJumpBounce = Mix_LoadWAV("./assets/mine/sfx/default/stomp.wav");
   gSound_Kick = Mix_LoadWAV("./assets/mine/sfx/default/kick.wav");

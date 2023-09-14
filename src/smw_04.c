@@ -369,7 +369,8 @@ LABEL_52:
         if (!ow_active_earthquake_event)
           goto LABEL_51;
         if (ow_active_earthquake_event == 0xFE) {
-          io_sound_ch1 = 33;
+          //io_sound_ch1 = 33;
+          Mix_PlayChannel(-1, gSound_ValleyOfBowserAppears, 0);
           io_music_ch1 = 8;
         }
         if ((kOwEarthquakeFrameMask_048231[ow_active_earthquake_event >> 4] & counter_global_frames) == 0) {
@@ -820,7 +821,8 @@ void OwProcess03_StandingStill() {  // 049120
       if (HandleOverworldStarPipeWarp_GetIndex()) {
         ow_star_launch_speed = 0;
         timer_wait_before_star_launch = 0;
-        io_sound_ch1 = 13;
+        //io_sound_ch1 = 13;
+        Mix_PlayChannel(-1, gSound_Cape, 0);
         pointer_current_overworld_process = 11;
         OwProcess0B_StarWarpAnimation();
       }
@@ -851,7 +853,8 @@ LABEL_15:;
     player_riding_yoshi_flag = yoshi_carry_over_levels_flag;
     player_current_item_box = players_item_box[player_current_character];
     timer_keep_game_mode_active = 2;
-    io_music_ch1 = 0x80;
+    //io_music_ch1 = 0x80;
+    MF_LoadMusic("./assets/mine/music/default/03-Yoshis-Island.mp3", 0, 0.010162, 0, 0);
     ++misc_game_mode;
     return;
   }
@@ -2766,7 +2769,8 @@ void OWSpr03_CheepCheep(uint8 k) {  // 04fa3e
         v5 = 0x80;
       owspr_table0df5[k] = ((uint8)((v4 >> 1) + v5) >> 1) & 0x40 | 0x12;
       owspr_zspeed[k] = 36;
-      io_sound_ch1 = 14;
+      //io_sound_ch1 = 14;
+      Mix_PlayChannel(-1, gSound_Swim, 0);
       OWSpr03_CheepCheep_04FA7D(k);
     }
   }

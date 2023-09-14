@@ -2403,7 +2403,8 @@ void SprStatus0A_Kicked_01998F(uint8 k) {  // 01998f
 }
 
 void MakeNormalSpriteReboundOffWall(uint8 k) {  // 01999e
-  io_sound_ch1 = 1;
+  //io_sound_ch1 = 1;
+  Mix_PlayChannel(-1, gSound_HitHead, 0);
   ChangeNormalSpriteDirection_FlipXSpeedAndDirection(k);
   if (!spr_xoffscreen_flag[k] && (uint8)(spr_xpos_lo[k] - mirror_current_layer1_xpos + 20) >= 0x1C) {
     LOBYTE(misc_current_layer_being_processed) = (spr_table1588[k] >> 6) & 1;
@@ -2965,7 +2966,8 @@ LABEL_40:
   if (v7 == 32) {
     uint8 v9 = spr_table160e[k];
     spr_current_status[v9] = 0;
-    io_sound_ch1 = 6;
+    //io_sound_ch1 = 6;
+    Mix_PlayChannel(-1, gSound_YoshiGulp, 0);
     if (spr_table160e[v9])
       goto LABEL_49;
     uint8 v10 = spr_spriteid[v9];
@@ -3285,7 +3287,8 @@ void CheckNormalSpriteToNormalSpriteColl_01A6D9(uint8 k, uint8 j) {  // 01a6d9
 }
 
 void CheckNormalSpriteToNormalSpriteColl_PlayKickSfx() {  // 01a728
-  io_sound_ch1 = 3;
+  //io_sound_ch1 = 3;
+  Mix_PlayChannel(-1, gSound_Kick, 0);
 }
 
 void sub_1A72E(uint8 k, uint8 j) {  // 01a72e
@@ -3416,7 +3419,8 @@ LABEL_27:
     SprStatus02_Dead_SetNorSprStatus04(k);
     SpawnSpinJumpStars(k);
     CheckPlayerToNormalSpriteColl_01AB46(k);
-    io_sound_ch1 = 8;
+    //io_sound_ch1 = 8;
+    Mix_PlayChannel(-1, gSound_SpinJumpKill, 0);
 LABEL_62:;
     uint8 v10 = spr_spriteid[k];
     if (v10 == 30)
@@ -3503,7 +3507,8 @@ uint8 CheckPlayerToNormalSpriteColl_ReturnNoContact2() {  // 01a87c
 }
 
 void CheckPlayerToNormalSpriteColl_01A8D8(uint8 k) {  // 01a8d8
-  io_sound_ch1 = 2;
+  //io_sound_ch1 = 2;
+  Mix_PlayChannel(-1, gSound_SpinJumpBounce, 0);
   BoostMarioSpeed();
   SpawnContactEffectFromAbove(k);
 }
@@ -3539,7 +3544,8 @@ void CheckPlayerToNormalSpriteColl_01AA42(uint8 k) {  // 01aa42
     SprStatus02_Dead_SetNorSprStatus04(k);
     SpawnSpinJumpStars(k);
     CheckPlayerToNormalSpriteColl_01AB46(k);
-    io_sound_ch1 = 8;
+    //io_sound_ch1 = 8;
+    Mix_PlayChannel(-1, gSound_SpinJumpKill, 0);
     if (spr_spriteid[k] == 30)
       spr_decrementing_table1540[sprites_lakitu_cloud_slot_index] = 31;
   } else {
@@ -3579,7 +3585,8 @@ void CheckPlayerToNormalSpriteColl_01AA42(uint8 k) {  // 01aa42
           player_ypos = GetSprYPos(k) - r0;
           if (spr_spriteid[k] == 62) {
             spr_property_bits167a[k] &= ~0x80;
-            io_sound_ch1 = 11;
+            //io_sound_ch1 = 11;
+            Mix_PlayChannel(-1, gSound_SwitchBlock, 0);
             if ((misc_music_register_backup & 0x80) == 0)
               io_music_ch1 = 14;
             spr_decrementing_table163e[k] = 32;
@@ -3945,7 +3952,8 @@ LABEL_8:
         spr_xspeed[k] = (spr_table00c2[k] & 1) ? -16 : 16;
       }
     } else {
-      io_sound_ch1 = 1;
+      //io_sound_ch1 = 1;
+      Mix_PlayChannel(-1, gSound_HitHead, 0);
       spr_decrementing_table1540[k] = 64;
     }
   }
@@ -4029,7 +4037,8 @@ void SprXXX_FixedMovementCheepCheep_01B10A(uint8 k) {  // 01b10a
 
 void KickHelplessSprite(uint8 k) {  // 01b12a
   timer_display_player_kicking_pose = 16;
-  io_sound_ch1 = 3;
+  //io_sound_ch1 = 3;
+  Mix_PlayChannel(-1, gSound_Kick, 0);
   uint8 v1 = CheckPlayerPositionRelativeToSprite_Bank01_X(k);
   spr_xspeed[k] = kSprXXX_FixedMovementCheepCheep_KickedXSpeed[v1];
   spr_yspeed[k] = -32;
@@ -4343,7 +4352,8 @@ uint8 SolidSpriteBlock(uint8 k) {  // 01b457
   player_yspeed = 16;
   if (spr_spriteid[k] >= 0x83)
     return SolidSpriteBlock_Entry2(k);
-  io_sound_ch1 = 1;
+  //io_sound_ch1 = 1;
+  Mix_PlayChannel(-1, gSound_HitHead, 0);
   return 0;
 }
 
@@ -4353,7 +4363,8 @@ uint8 SolidSpriteBlock_Entry2(uint8 k) {  // 01b4e2
     ++spr_table00c2[k];
     spr_decrementing_table1558[k] = 16;
   }
-  io_sound_ch1 = 1;
+  //io_sound_ch1 = 1;
+  Mix_PlayChannel(-1, gSound_HitHead, 0);
   return 0;
 }
 
@@ -4727,7 +4738,8 @@ void Spr054_ClimbingNetDoor_Init(uint8 k) {  // 01ba87
 void Spr054_ClimbingNetDoor(uint8 k) {  // 01bacd
   SubOffscreen_Bank01_Entry1(k);
   if (spr_decrementing_table154c[k] == 1) {
-    io_sound_ch1 = 15;
+    //io_sound_ch1 = 15;
+    Mix_PlayChannel(-1, gSound_HurtWhileFlying, 0);
     Spr054_ClimbingNetDoor_UpdateClimbingNetDoorTiles(k, 0x19);
     spr_decrementing_table1540[k] = 31;
     timer_on_swinging_climbing_net_door = 31;
@@ -4840,7 +4852,8 @@ void Spr020_Magic(uint8 k) {  // 01bc38
     if ((uint8)(spr_ypos_lo[k] - mirror_current_layer1_ypos) >= 0xE0)
       spr_current_status[k] = 0;
   } else {
-    io_sound_ch1 = 1;
+    //io_sound_ch1 = 1;
+    Mix_PlayChannel(-1, gSound_HitHead, 0);
     spr_current_status[k] = 0;
     if ((uint8)(sprites_map16_tile_touched_vert_lo - 17) < 0x1D) {
       uint8 tt = GetRand();
@@ -5021,7 +5034,8 @@ void Spr01F_MagiKoopa_01BF1D(uint8 k) {  // 01bf1d
     if ((--j & 0x80) != 0)
       return;
   }
-  io_sound_ch1 = 16;
+  //io_sound_ch1 = 16;
+  Mix_PlayChannel(-1, gSound_Magic, 0);
   spr_current_status[j] = 8;
   spr_spriteid[j] = 32;
   SetSprXPos(j, GetSprXPos(k));
@@ -5302,7 +5316,8 @@ LABEL_37:
       spr_xspeed[k] = player_xspeed;
       timer_inflate_from_pballoon = 9;
       timer_player_has_pballoon = -1;
-      io_sound_ch1 = 30;
+      //io_sound_ch1 = 30;
+      Mix_PlayChannel(-1, gSound_Balloon, 0);
       break;
     }
   }
@@ -5477,7 +5492,8 @@ void SprXXX_PowerUps_GiveMarioMushroom(uint8 k) {  // 01c561
   SprXXX_PowerUps_01C56F(k);
   if (!spr_table1534[k])
     GivePoints(k, 4);
-  io_sound_ch1 = 16;//10;
+  Mix_PlayChannel(-1, gSound_Powerup, 0);
+  //io_sound_ch1 = 16;
 }
 
 
@@ -5499,7 +5515,8 @@ void SprXXX_PowerUps_GiveMarioStar(uint8 k) {  // 01c592
 
 void SprXXX_PowerUps_GiveMarioCape(uint8 k) {  // 01c598
   player_current_power_up = 2;
-  io_sound_ch1 = 13;
+  //io_sound_ch1 = 13;
+  Mix_PlayChannel(-1, gSound_Cape, 0);
   GivePoints(k, 4);
   SprXXX_PowerUps_01C5AE();
   ++flag_sprites_locked;
@@ -6139,7 +6156,8 @@ void Spr029_KoopaKid_MortonRoyLudwig_State03_Hurt(uint8 k) {  // 01cf7d
 }
 
 void Spr029_KoopaKid_MortonRoyLudwig_01CFD0(uint8 k) {  // 01cfd0
-  io_sound_ch1 = 31;
+  //io_sound_ch1 = 31;
+  Mix_PlayChannel(-1, gSound_KoopalingDefeat, 0);
   spr_table151c[k] = 4;
   spr_decrementing_table1540[k] = 19;
 }
@@ -6329,7 +6347,8 @@ void Spr029_KoopaKid_MortonRoyLudwig_01D2A8(uint8 k) {  // 01d2a8
           } else if ((player_yspeed & 0x80) == 0) {
             Spr029_KoopaKid_MortonRoyLudwig_01D351(k);
             player_yspeed = -48;
-            io_sound_ch1 = 2;
+            //io_sound_ch1 = 2;
+            Mix_PlayChannel(-1, gSound_SpinJumpBounce, 0);
             if (spr_table1602[k] < 0x1B) {
               uint8 v1 = HIBYTE(misc_m7_angle) >> 1;
               misc_m7_angle = 0x2818;
@@ -6357,7 +6376,8 @@ void Spr029_KoopaKid_MortonRoyLudwig_01D309(uint8 k) {  // 01d309
 }
 
 void sub_1D31E(uint8 k) {  // 01d31e
-  io_sound_ch1 = 1;
+  //io_sound_ch1 = 1;
+  Mix_PlayChannel(-1, gSound_HitHead, 0);
   if ((player_yspeed & 0x80) == 0) {
     Spr029_KoopaKid_MortonRoyLudwig_01D309(k);
     player_yspeed = -48;
@@ -6367,7 +6387,8 @@ void sub_1D31E(uint8 k) {  // 01d31e
 }
 
 void sub_1D334(uint8 k) {  // 01d334
-  io_sound_ch1 = 1;
+  //io_sound_ch1 = 1;
+  Mix_PlayChannel(-1, gSound_HitHead, 0);
   if ((player_yspeed & 0x80) == 0) {
     player_xspeed = ((spr_xpos_lo[k] & 0x80) != 0) ? -32 : 32;
     player_yspeed = -80;
@@ -6398,7 +6419,8 @@ void Spr029_KoopaKid_MortonRoyLudwig_01D3B1(uint8 k) {  // 01d3b1
         if (StandardSpriteToSpriteCollisionChecks_CheckContact(&ci)) {
           ext_spr_spriteid[i] = 1;
           ext_spr_decrementing_table176f[i] = 15;
-          io_sound_ch1 = 1;
+          //io_sound_ch1 = 1;
+          Mix_PlayChannel(-1, gSound_HitHead, 0);
           if (++spr_table1626[k] >= 0xC)
             Spr029_KoopaKid_MortonRoyLudwig_01CFD0(k);
         }
@@ -8111,7 +8133,8 @@ void Spr035_Yoshi_01F0A2(uint8 k) {  // 01f0a2
 }
 
 void Spr035_Yoshi_HandleYoshiSwallowingSomething() {  // 01f0d3
-  io_sound_ch1 = 6;
+  //io_sound_ch1 = 6;
+  Mix_PlayChannel(-1, gSound_YoshiGulp, 0);
   GiveCoins_OneCoin();
   uint8 v0 = yoshi_berry_being_eaten;
   if (yoshi_berry_being_eaten) {
@@ -8227,7 +8250,8 @@ void Spr035_Yoshi_01F295(uint8 k, uint8 r0) {  // 01f295
 }
 
 void Spr035_Yoshi_01F2DF(uint8 j) {  // 01f2df
-  io_sound_ch1 = 32;
+  //io_sound_ch1 = 32;
+  Mix_PlayChannel(-1, gSound_YoshiTongue, 0);
   if ((spr_property_bits1686[j] & 0x40) != 0) {
     spr_spriteid[j] = kGenericSpriteToSpawnTable[spr_spriteid[j]];
     InitializeNormalSpriteRAMTables_YXPPCCCTAndPropertyTables(j);
@@ -8390,7 +8414,8 @@ void Spr035_Yoshi_TryEatSprite(uint8 k, uint8 j, CollInfo *ci) {  // 01f58e
   StandardSpriteToSpriteCollisionChecks_GetSpriteClippingA(j, ci);
   if (StandardSpriteToSpriteCollisionChecks_CheckContact(ci)) {
     if (spr_property_bits1686[j] & 1) {
-      io_sound_ch1 = 1;
+      //io_sound_ch1 = 1;
+      Mix_PlayChannel(-1, gSound_HitHead, 0);
       return;
     }
     if (spr_spriteid[j] == 112) {
@@ -8897,7 +8922,8 @@ void Spr029_KoopaKid_IggyLarry_01FC62(uint8 k, PointU16 pt) {  // 01fc62
           if (StandardSpriteToSpriteCollisionChecks_CheckContact(&ci)) {
             ext_spr_spriteid[i] = 1;
             ext_spr_decrementing_table176f[i] = 15;
-            io_sound_ch1 = 1;
+            //io_sound_ch1 = 1;
+            Mix_PlayChannel(-1, gSound_HitHead, 0);
             spr_decrementing_table154c[k] = 16;
           }
         }
@@ -8924,7 +8950,8 @@ void Spr029_KoopaKid_IggyLarry_ThrowBall(uint8 k, PointU16 pt) {  // 01fda7
     if ((--j & 0x80) != 0)
       return;
   }
-  io_sound_ch1 = 32;
+  //io_sound_ch1 = 32;
+  Mix_PlayChannel(-1, gSound_YoshiTongue, 0);
   spr_current_status[j] = 8;
   spr_spriteid[j] = -89;
   InitializeNormalSpriteRAMTables(j);

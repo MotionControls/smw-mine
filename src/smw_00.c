@@ -1944,7 +1944,8 @@ void GameMode0A_PlayerSelect() {  // 009dfa
 }
 
 void GameMode0A_PlayerSelect_Entry2() {  // 009e17
-  io_music_ch1 = 0x80;
+  //io_music_ch1 = 0x80;
+  MF_LoadMusic("./assets/mine/music/default/03-Yoshis-Island.mp3", 0, 0.010162, 0, 0);
   players_lives[1] = -1;
   uint8 v0 = flag_two_player_game;
   do
@@ -2254,11 +2255,15 @@ void GameMode14_InLevel() {  // 00a1da
       --timer_prevent_pause;
     } else if ((io_controller_press1 & 0x10) != 0 && !timer_end_level && player_current_state < 9) {
       timer_prevent_pause = 60;
-      uint8 v1 = 18;
+      //uint8 v1 = 18;
       flag_pause ^= 1;
-      if (flag_pause)
-        v1 = 17;
-      io_sound_ch1 = v1;
+      if (flag_pause){
+        Mix_PlayChannel(-1, gSound_Unpause, 0);
+        //v1 = 17;
+      }else{
+        Mix_PlayChannel(-1, gSound_Pause, 0);
+      }
+      //io_sound_ch1 = v1;
     }
     if (flag_pause) {
       if ((io_controller_hold1 & 0x20) != 0 && (ow_level_tile_settings[ow_level_number_lo] & 0x80) && (int8)misc_exit_level_action <= 0) {
@@ -3533,7 +3538,8 @@ void PlayerState0C_CastleDestructionMoves() {  // 00c6e7
         if (!player_facing_direction) {
 LABEL_12:
           player_yspeed = v1;
-          io_sound_ch1 = 1;
+          //io_sound_ch1 = 1;
+          Mix_PlayChannel(-1, gSound_HitHead, 0);
 LABEL_14:
           LOBYTE(player_ypos) = v0;
           goto LABEL_15;
@@ -3552,7 +3558,8 @@ LABEL_15:;
     v3 += 2;
     player_timer_pipe_warping = kPlayerState0C_CastleDestructionMoves_CastleDestructionMovementData[v3 + 1];
     if (*(kPlayerState0C_CastleDestructionMoves_CastleDestructionMovementData + v3) == 45)
-      io_sound_ch1 = 30;
+      Mix_PlayChannel(-1, gSound_Balloon, 0);
+      //io_sound_ch1 = 30;
   }
   if (*(kPlayerState0C_CastleDestructionMoves_CastleDestructionMovementData + v3) != 0xFF) {
     uint8 v10 = *(kPlayerState0C_CastleDestructionMoves_CastleDestructionMovementData + v3);
@@ -3574,7 +3581,8 @@ LABEL_15:;
         }
         int8 v6 = v5 - 1;
         if (!v6) {
-          io_sound_ch1 = 14;
+          //io_sound_ch1 = 14;
+          Mix_PlayChannel(-1, gSound_Swim, 0);
           PointU16 *pt = get_PointU16(l1_l2_scroll_spr_speed, 0);
           ++LOBYTE(pt->x);
           goto LABEL_40;
@@ -3599,7 +3607,8 @@ LABEL_15:;
         player_xspeed = -40;
         ++l1_l2_scroll_spr_spriteid[0];
       } else if (timer_display_player_pick_up_pose) {
-        io_sound_ch1 = 9;
+        //io_sound_ch1 = 9;
+        Mix_PlayChannel(0, gSound_Fly, 0);
       }
       ++l1_l2_scroll_spr_spriteid[0];
     } else {
@@ -4404,7 +4413,8 @@ void PlayerStateXX_EnterPipe_00D22D() {  // 00d22d
       ++flag_about_to_warp_in_pipe;
     }
     if (!(player_yspeed | player_xspeed))
-      io_sound_ch1 = 4;
+      Mix_PlayChannel(-1, gSound_HurtOrPipe, 0);
+      //io_sound_ch1 = 4;
     player_xspeed = kPlayerStateXX_EnterPipe_PipeXSpeed[v0];
     player_yspeed = kPlayerStateXX_EnterPipe_PipeYSpeed[v0];
     player_in_air_flag = 0;
@@ -4636,9 +4646,8 @@ LABEL_43:
           canPlayerAirJump = 0;
           player_spin_jump_flag = 1;
           player_yspeed = 174;
-          //io_sound_ch1 = 9;   // Play cape fly sound
-          Mix_PlayChannel(-1,gSound_SpinJump,0);  // Play "UUMF"
-          printf(Mix_GetError());
+          Mix_PlayChannel(-1,gSound_SpinJump,0);
+          //printf(Mix_GetError());
         }
         if (player_riding_yoshi_flag && yoshi_yoshi_has_wings >> 1) {
           v6 = 2;
@@ -4742,7 +4751,8 @@ LABEL_27:
         player_furthest_cape_dive_stage = 0;
       }
     } else {
-      io_sound_ch1 = 9;
+      //io_sound_ch1 = 9;
+      Mix_PlayChannel(0, gSound_Fly, 0);
     }
     if (!player_xspeed || ((kHandlePlayerPhysics_DATA_00D535[player_facing_direction] ^ player_xspeed) & 0x80) != 0)
 LABEL_41:
@@ -4888,7 +4898,8 @@ LABEL_43:
 }
 
 void HandlePlayerPhysics_00DAA9() {  // 00daa9
-  io_sound_ch1 = 14;
+  //io_sound_ch1 = 14;
+  Mix_PlayChannel(-1, gSound_Swim, 0);
   player_anim_timer |= 0x10;
 }
 
@@ -4945,7 +4956,8 @@ LABEL_29:
     return;
   }
   if ((io_controller_press1 & 0x40) && (player_climbing_flag & 0x80) != 0) {
-    io_sound_ch1 = 1;
+    //io_sound_ch1 = 1;
+    Mix_PlayChannel(-1, gSound_HitHead, 0);
     player_facing_direction_on_net_door = v8;
     player_facing_direction = ((uint8)(player_xpos & 8) >> 3) ^ 1;
     timer_display_player_net_punch_pose = 8;
@@ -5517,8 +5529,9 @@ LABEL_62:;
   }
   if ((player_yspeed & 0x80) != 0) {
     player_yspeed = 0;
-    if (!io_sound_ch1)
-      io_sound_ch1 = 1;
+    /*if (!io_sound_ch1)
+      io_sound_ch1 = 1;*/
+    Mix_PlayChannel(-1, gSound_HitHead, 0);
   }
 LABEL_73:;
   PairU16 v18 = GetPlayerLevelCollisionMap16ID_WallRun(v0 += 2);
@@ -5946,7 +5959,8 @@ void RunPlayerBlockCode_00F2C9(uint8 j, uint8 a) {  // 00f2c9
       PlayerState00_SetMidpointFlag();
     if (!player_current_power_up)
       player_current_power_up = 1;
-    io_sound_ch1 = 5;
+    //io_sound_ch1 = 5;
+    Mix_PlayChannel(-1, gSound_Checkpoint, 0);
   } else {
     if (j != 6) {
       if (j < 7 || j >= 0x1D) {
@@ -5987,7 +6001,8 @@ LABEL_15:
     RunPlayerBlockCode_00F377();
     if (++counter_yoshi_coins_to_display >= 5)
       flag_collected5_yoshi_coins[ow_level_number_lo >> 3] |= kBitTable_Bank05[ow_level_number_lo & 7];
-    io_sound_ch1 = 28;
+    //io_sound_ch1 = 28;
+    Mix_PlayChannel(-1, gSound_YoshiCoin, 0);
     GiveCoins_MultipleCoins_NoCoinSound(1);
     blocks_map16_to_generate = 24;
     goto LABEL_15;
@@ -6052,7 +6067,8 @@ uint8 sub_F40A(uint8 k, uint8 j, uint8 a) {  // 00f40a
     yoshi_in_pipe = v4 + 1;
     player_current_state = j;
     DamagePlayer_DisableButtons();
-    io_sound_ch1 = 4;
+    //io_sound_ch1 = 4;
+    Mix_PlayChannel(-1, gSound_HurtOrPipe, 0);
   }
   return blocks_currently_processed_map16_tile_lo;
 }
@@ -6189,12 +6205,14 @@ void DamagePlayer_Hurt() {  // 00f5b7
       RunPlayerBlockCode_00EB48(player_wall_walk_status & 1);
     if (player_current_power_up) {
       if (player_current_power_up == 2 && player_cape_flying_phase) {
-        io_sound_ch1 = 15;
+        //io_sound_ch1 = 15;
+        Mix_PlayChannel(-1, gSound_HurtWhileFlying, 0);
         player_spin_jump_flag = 1;
         timer_player_hurt = 48;
         DamagePlayer_00F622();
       } else {
-        io_sound_ch1 = 4;
+        //io_sound_ch1 = 4;
+        Mix_PlayChannel(-1, gSound_HurtOrPipe, 0);
         DropReservedItem();
         player_current_state = 1;
         player_current_power_up = 0;
@@ -6428,7 +6446,8 @@ void PlayerState00_00F8F2() {  // 00f8f2
     if ((player_yspeed & 0x80) != 0 && (int16)(player_ypos - kPlayerState00_DATA_00F8E8[v0]) < 0) {
       player_ypos = kPlayerState00_DATA_00F8E8[v0];
       player_yspeed = 0;
-      io_sound_ch1 = 1;
+      //io_sound_ch1 = 1;
+      Mix_PlayChannel(-1, gSound_HitHead, 0);
     }
     if (kPlayerState00_DATA_00F8E8[misc_currently_active_boss] == 42) {
       uint8 v1 = 0;
@@ -6551,7 +6570,8 @@ LABEL_11:
   spr_yspeed[j] = -48;
   spr_xspeed[j] = 5;
   spr_decrementing_table154c[j] = 32;
-  io_sound_ch1 = 12;
+  //io_sound_ch1 = 12;
+  Mix_PlayChannel(-1, gSound_ItemTransform, 0);
   uint8 v4 = 3;
   while (smoke_spr_spriteid[v4]) {
     if ((--v4 & 0x80) != 0)

@@ -1428,7 +1428,7 @@ void HandleCastleCrumblingDown() {  // 0ccd23
     if ((uint8)mirror_current_layer1_ypos == 0xE8)
       InitializeCastleDestructionTextTimers_DontIncrementCutsceneProcess();
     if ((uint8)mirror_current_layer1_ypos == 0xC0) {
-      io_sound_ch1 = 34;
+      io_sound_ch1 = 34;      
       HandleCastleCrumblingDown_DrawCastleRubble();
       sprites_cutscene_sprite_yspeed[1] = 8;
     }
@@ -1543,7 +1543,9 @@ LABEL_7:
       l1_l2_scroll_spr_scroll_type_index[0] = kHandleFarawayCastleRocket_DATA_0CCED4[v1];
       l1_l2_scroll_spr_spriteid[1] = kHandleFarawayCastleRocket_DATA_0CCEDB[v1];
       if (v1 == 1)
-        io_sound_ch1 = 8;
+        Mix_PlayChannel(-1, gSound_SpinJumpKill, -1);
+        //io_sound_ch1 = 8;
+
       if (v1 == 6)
         InitializeCastleDestructionTextTimers();
     }
@@ -1800,7 +1802,8 @@ void InitializeTNTExplosion() {  // 0cd295
 }
 
 void InitializeCastleCrumblingDown() {  // 0cd2b2
-  io_sound_ch1 = 33;
+  //io_sound_ch1 = 33;
+  Mix_PlayChannel(-1, gSound_ValleyOfBowserAppears, 0);
   CheckIfPlayerCanEndCastleDestructionCutscene();
   InitializeCastleDust();
   HandleCastleCrumblingDown();
@@ -2121,7 +2124,8 @@ LABEL_38:
   ++l1_l2_scroll_spr_timer[1];
   if (v14 < 6) {
     if (!(v14 & 1))
-      io_sound_ch1 = 15;
+      //io_sound_ch1 = 15;
+      Mix_PlayChannel(-1, gSound_HurtWhileFlying, 0);
   } else {
     LOBYTE(v15->x) = 0;
   }
