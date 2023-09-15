@@ -1,0 +1,9 @@
+From ow_players_map[0]
+
+0	;	World 2,4,6
+1	;	World 1
+2	;	World 3
+3	;	Forest of Illusion
+4	;	World 7
+5	;	Special World
+6	;	Star Road

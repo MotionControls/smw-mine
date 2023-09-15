@@ -853,8 +853,9 @@ LABEL_15:;
     player_riding_yoshi_flag = yoshi_carry_over_levels_flag;
     player_current_item_box = players_item_box[player_current_character];
     timer_keep_game_mode_active = 2;
+    // Level Music
     //io_music_ch1 = 0x80;
-    MF_LoadMusic("./assets/mine/music/default/03-Yoshis-Island.mp3", 0, 0.010162, 0, 0);
+    Mix_PauseMusic();
     ++misc_game_mode;
     return;
   }

@@ -1,33 +1,50 @@
 #include "musicvars.h"
 
-/*  MF_LoadMusic(path, start, end, loop, doLoop);
-    Loads a new song with the specified variables.
-path            ;   Path to mp3.
-start,end,loop  ;   Music positions, explained in musicvars.h.
-doLoop          ;   Whether or not the current track should loop when finished.
+/*  MF_InitMusic(path,start,end,loop,doLoop);
+    Inits a MUS struct.
+Args explained in musicvars.h -> MUS.
 */
-void MF_LoadMusic(const char* path, double start, double end, double loop, int doLoop){
-    printf("Loading track: %s\n", path);
-    gMusic_Main = Mix_LoadMUS(path);
+MUS* MF_InitMusic(const char* path, double start, double end, double loop, int doLoop){
+    MUS* temp = malloc(sizeof(MUS));
+    temp->path = path;
+    temp->pos = 0;
+    temp->start = start;
+    temp->end = end;
+    printf("%d, %d\n", temp->end, end);
+    temp->loop = loop;
+    temp->doLoop = doLoop;
+    free(temp);
+    return temp;
+}
+
+/*  MF_LoadMusic(mus);
+    Loads a new song from the specified mus struct.
+mus ;   Music file to load.
+*/
+void MF_LoadMusic(MUS* mus){
+    printf("Loading track: \"%s\"\n", mus->path);
+    gMusic_Main = Mix_LoadMUS(mus->path);
     if(gMusic_Main == NULL)
         printf("Error loading track: %s\n", Mix_GetError());
-    Mix_PlayMusic(gMusic_Main, doLoop);
+    Mix_PlayMusic(gMusic_Main, mus->doLoop);
 
-    startPos = start;
-    endPos = end;
-    loopPos = loop;
-    loopCurMusic = doLoop;
+    gMusic_Playing = mus;
 }
 
 /*  MF_StepMusic();
     Processes the currently playing music.
 */
 void MF_StepMusic(){
-    // Get music position.
-    if(Mix_PlayingMusic())
-        musicPos = Mix_GetMusicPosition(gMusic_Main) * 1000;
-    
-    // Loop song.
-    if(loopCurMusic && musicPos >= endPos)
-        Mix_SetMusicPosition(loopPos / 1000);
+    if(gMusic_Playing != NULL){
+        // Get music position.
+        if(Mix_PlayingMusic())
+            gMusic_Playing->pos = Mix_GetMusicPosition(gMusic_Main) * 1000;
+        
+        printf("Current muspos: %u / %u\n", gMusic_Playing->pos, gMusic_Playing->end);
+        // Loop song.
+        if(gMusic_Playing->doLoop && gMusic_Playing->pos >= gMusic_Playing->end){
+            printf("Looping current track.\n");
+            Mix_SetMusicPosition(gMusic_Playing->loop / 1000);
+        }
+    }
 }

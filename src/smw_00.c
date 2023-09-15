@@ -380,8 +380,12 @@ void HandleSPCUploads_UploadCreditsMusicBank() {  // 008159
 void SmwVectorNMI() {
   int trigger_line = -1;
   uint8 v0 = io_music_ch1;
+  // Play Music
   if (io_music_ch1  || g_ram[kSmwRam_APUI02] == io_copy_of_music_ch1) {
     RtlApuWrite(APUI02, v0);
+    if(v0 > 0){
+      printf("Attempting to play \"%u\" at map \"%u\"\n", v0, ow_players_map[0]);
+    }
     io_copy_of_music_ch1 = v0;
     io_music_ch1 = 0;
   }
@@ -1945,7 +1949,30 @@ void GameMode0A_PlayerSelect() {  // 009dfa
 
 void GameMode0A_PlayerSelect_Entry2() {  // 009e17
   //io_music_ch1 = 0x80;
-  MF_LoadMusic("./assets/mine/music/default/03-Yoshis-Island.mp3", 0, 0.010162, 0, 0);
+  switch(ow_players_map[0]){
+    case 0:
+      //MF_LoadMusic("./assets/mine/music/default/03-YoshisIsland.mp3", 0, 10162, 0, 1);
+      MF_LoadMusic(gMusic_World1);
+      break;
+    case 1:
+      //MF_LoadMusic("./assets/mine/music/default/03-YoshisIsland.mp3", 0, 10162, 0, 1);
+      break;
+    case 2:
+      //MF_LoadMusic("./assets/mine/music/default/03-YoshisIsland.mp3", 0, 10162, 0, 1);
+      break;
+    case 3:
+      //MF_LoadMusic("./assets/mine/music/default/03-YoshisIsland.mp3", 0, 10162, 0, 1);
+      break;
+    case 4:
+      //MF_LoadMusic("./assets/mine/music/default/03-YoshisIsland.mp3", 0, 10162, 0, 1);
+      break;
+    case 5:
+      //MF_LoadMusic("./assets/mine/music/default/03-YoshisIsland.mp3", 0, 10162, 0, 1);
+      break;
+    case 6:
+      //MF_LoadMusic("./assets/mine/music/default/03-YoshisIsland.mp3", 0, 10162, 0, 1);
+      break;
+  }
   players_lives[1] = -1;
   uint8 v0 = flag_two_player_game;
   do

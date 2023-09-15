@@ -1,0 +1,18 @@
+From io_music_ch1
+
+0	;	Nothing
+1	;	Title Screen 	/	Water Plains
+2	;	World 2,4,6 	/	Plains
+3	;	World 1		/	Underwater
+4	;	World 3
+6	;	Underground
+7	;	Ghost House
+9	;	Special World
+12	;	Level Cleared
+13	;	Starman
+14	;	P-Switch
+16	;	Key Fadeout
+17	;	Level Fadeout
+18	;	Switch Palace 	/	Bonus
+19	;	Intro
+128	;	?

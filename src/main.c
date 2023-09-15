@@ -905,19 +905,22 @@ static void LoadAssets() {
     g_asset_ptrs[i] = data + offset;
     offset += size;
   }
-
-  // Load custom sounds & music
-  /*gMusic = Mix_LoadMUS("./assets/mine/music/testmusic.mp3");
-  if(gMusic == NULL)
-    printf("Cannot load music: %s\n", Mix_GetError());
-  gSoundCh1 = Mix_LoadWAV("./assets/mine/music/testsfx.wav");
-  if(gSoundCh1 == NULL)
-    printf("Cannot load sfx: %s\n", Mix_GetError());*/
   
   // Music
+  printf("Loading music...\n");
   gMusic_Main = Mix_LoadMUS("./assets/mine/music/testmusic.mp3");
+  gMusic_World1 = MF_InitMusic("./assets/mine/music/default/03-Yoshis-Island.mp3", 0, 13121, 0, 1);
+  gMusic_World2_4_6 = MF_InitMusic("./assets/mine/music/default/04-Wandering-the-Plains.mp3", 0, 7204, 0, 1);
+  //printf("gMusic_World2_4_6: \"%s\", %d, %d, %d\n", gMusic_World2_4_6->path, gMusic_World2_4_6->start, gMusic_World2_4_6->end, gMusic_World2_4_6->loop);
+  gMusic_World3 = MF_InitMusic("./assets/mine/music/default/05-Vanilla-Dome.mp3", 0, 509000, 0, 1);
+  gMusic_World7 = MF_InitMusic("./assets/mine/music/default/08-Valley-of-Bowser.mp3", 0, 509000, 0, 1);
+  gMusic_SpecialWorld = MF_InitMusic("./assets/mine/music/default/10a-Special-World.mp3", 0, 509000, 0, 1);
+  gMusic_ForestOfIllusion = MF_InitMusic("./assets/mine/music/default/06-Forest-of-Illusion.mp3", 0, 509000, 0, 1);
+  gMusic_StarRoad = MF_InitMusic("./assets/mine/music/default/09-Star-Road.mp3", 0, 509000, 0, 1);
+  
 
   // SFX
+  printf("Loading sfx...\n");
   gSound_ = Mix_LoadWAV("./assets/mine/sfx/default/LUIGIISDRUNKAGAIN.wav");
   gSound_HitHead = Mix_LoadWAV("./assets/mine/sfx/default/bump.wav");
   gSound_SpinJumpBounce = Mix_LoadWAV("./assets/mine/sfx/default/stomp.wav");
