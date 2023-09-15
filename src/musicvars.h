@@ -134,6 +134,7 @@ Mix_Chunk* gSound_BonusCorrect;
 Mix_Chunk* gSound_BonusWrong;
 
 /* Funcs */
+void foo();
 MUS* MF_InitMusic(const char*,double,double,double,int);
 //void MF_LoadMusic(const char*,double,double,double,int);
 void MF_LoadMusic(MUS*);

@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "volume_control.h": "c"
+        "volume_control.h": "c",
+        "sdl_mixer.h": "c"
     }
 }

@@ -10,9 +10,10 @@ MUS* MF_InitMusic(const char* path, double start, double end, double loop, int d
     temp->pos = 0;
     temp->start = start;
     temp->end = end;
-    printf("%d, %d\n", temp->end, end);
     temp->loop = loop;
     temp->doLoop = doLoop;
+    printf("New Values:\n\tpath: %s\n\tstart: %d\n\tend: %d\n\tloop: %d\n\tdoLoop: %i\n", temp->path, temp->start, temp->end, temp->loop, temp->doLoop);
+    printf("Set Values:\n\tpath: %s\n\tstart: %d\n\tend: %d\n\tloop: %d\n\tdoLoop: %i\n", path, start, end, loop, doLoop);
     free(temp);
     return temp;
 }
