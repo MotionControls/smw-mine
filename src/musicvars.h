@@ -5,37 +5,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Music Path
-/*  MUS
-    Struct to contain music information.
-path            ;   Path to mp3.
-pos             ;   Where the track is in ms.
-start,end,loop  ;   When the track start, ends, and loops in ms.
-doLoop          ;   Whether or not the track should loop.
-*/
-typedef struct{
-    const char* path;
-    double pos,start,end,loop;
-    int doLoop;
-}MUS;
-
 /* Music Paths */
 // Overworld
-MUS* gMusic_World1;
-MUS* gMusic_World2_4_6;
-MUS* gMusic_World3;
-MUS* gMusic_World7;
-MUS* gMusic_SpecialWorld;
-MUS* gMusic_ForestOfIllusion;
-MUS* gMusic_StarRoad;
 
 // Levels
 
 // Misc.
 
 /* Init Music + SFX */
-int musicPos;
-MUS* gMusic_Playing;
+int musicPos, musicDoLoop;
+double musicStart, musicEnd, musicLoop;
 Mix_Music* gMusic_Main;
 Mix_Chunk* gSound_;
 Mix_Chunk* gSound_HitHead;
@@ -134,8 +113,5 @@ Mix_Chunk* gSound_BonusCorrect;
 Mix_Chunk* gSound_BonusWrong;
 
 /* Funcs */
-void foo();
-MUS* MF_InitMusic(const char*,double,double,double,int);
-//void MF_LoadMusic(const char*,double,double,double,int);
-void MF_LoadMusic(MUS*);
+void MF_LoadMusic(const char*,double,double,double,int);
 void MF_StepMusic();

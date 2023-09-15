@@ -1952,7 +1952,8 @@ void GameMode0A_PlayerSelect_Entry2() {  // 009e17
   switch(ow_players_map[0]){
     case 0:
       //MF_LoadMusic("./assets/mine/music/default/03-YoshisIsland.mp3", 0, 10162, 0, 1);
-      MF_LoadMusic(gMusic_World1);
+      //MF_LoadMusic(gMusic_World1);
+      MF_LoadMusic(gMusic_World2_4_6);
       break;
     case 1:
       //MF_LoadMusic("./assets/mine/music/default/03-YoshisIsland.mp3", 0, 10162, 0, 1);
