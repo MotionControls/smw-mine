@@ -6,14 +6,14 @@ Args explained in musicvars.h -> MUS.
 */
 MUS* MF_InitMusic(const char* path, double start, double end, double loop, int doLoop){
     MUS* temp = malloc(sizeof(MUS));
-    temp->path = path;
     temp->pos = 0;
+    temp->path = path;
     temp->start = start;
     temp->end = end;
     temp->loop = loop;
     temp->doLoop = doLoop;
-    printf("New Values:\n\tpath: %s\n\tstart: %d\n\tend: %d\n\tloop: %d\n\tdoLoop: %i\n", temp->path, temp->start, temp->end, temp->loop, temp->doLoop);
-    printf("Set Values:\n\tpath: %s\n\tstart: %d\n\tend: %d\n\tloop: %d\n\tdoLoop: %i\n", path, start, end, loop, doLoop);
+    /*printf("New Values:\n\tpath: %s\n\tstart: %d\n\tend: %d\n\tloop: %d\n\tdoLoop: %i\n", temp->path, temp->start, temp->end, temp->loop, temp->doLoop);
+    printf("Set Values:\n\tpath: %s\n\tstart: %d\n\tend: %d\n\tloop: %d\n\tdoLoop: %i\n", path, start, end, loop, doLoop);*/
     free(temp);
     return temp;
 }
@@ -41,10 +41,10 @@ void MF_StepMusic(){
         if(Mix_PlayingMusic())
             gMusic_Playing->pos = Mix_GetMusicPosition(gMusic_Main) * 1000;
         
-        printf("Current muspos: %u / %u\n", gMusic_Playing->pos, gMusic_Playing->end);
+        //printf("Current muspos: %u / %u\n", gMusic_Playing->pos, gMusic_Playing->end);
         // Loop song.
         if(gMusic_Playing->doLoop && gMusic_Playing->pos >= gMusic_Playing->end){
-            printf("Looping current track.\n");
+            //printf("Looping current track.\n");
             Mix_SetMusicPosition(gMusic_Playing->loop / 1000);
         }
     }
